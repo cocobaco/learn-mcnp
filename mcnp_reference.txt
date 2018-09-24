@@ -1,0 +1,91 @@
+server: 10.104.1.15
+
+run mcnp by parallel
+
+nohup /opt/mpich2/bin/mpiexec n=4 /opt/mcnpx/bin/mcnpx.mpi i=input.i < /dev/null &
+
+n = number of cpu
+
+* run interactively
+
+mcnp5 ipxrz i=input.txt
+mcnpx ipxrz i=input.txt
+i = process input file
+p = plot geometry (ex: px 10, py -5, pz 50 ex 20)
+x = process cross sections
+r = process particle transport
+z = plot tally results (ex: xs m1 mt 1, tally 5)
+
+* plot geometry:
+px 100 (cut plane x at 100 cm)
+ext 50 (+/- 50 cm width)
+
+* plot cross section:
+end
+xs
+xs m1 mt 2 (plot elastic xs of material m1)
+
+* plot tally:
+tally
+tally 4 (plot tally f4)
+
+* axis scales:
+linlin
+loglin
+linlog
+loglog
+xlims xmin xmax
+ylims ymin ymax
+hist (histograms)
+plinear (piecewise-linear plot)
+bar (bars)
+noerrbar (suppress error bars)
+
+* save plots
+file=all
+
+to submit multiple runs to server and log out.
+
+* script file
+--------------
+#!/bin/bash
+mcnpx ipxrz i=inp1
+mcnpx ipxrz i=inp2
+mcnpx ipxrz i=inp3
+--------------------------
+
+on command line, make file executable:
+> chmod +x samplescript
+
+submit job:
+> nohup ./samplescript &
+
+* open runtp* file to plot tally:
+
+unixprompt> mcnpx z
+mcnpprompt> 
+runtpe=runtpf_file (or run=runtpe_file) 
+plot
+ori 100 50 0 ext 200 pz 0 la 0 0
+la 0 1 tall11.1 color on la 0 0 cont 5 95 % scale 2
+file=all
+or
+plot
+pz 10 origin 100 50 0 ext 200 la 0 1 tal11 la 0 0 cont 0 100 % color on scale 1
+(no space after tal)
+
+* open mcta* file to plot tally:
+mcnpprompt>
+rmctal=mctal_file
+tally 12 free ij fixed k 1
+(space after tal)
+
+* convert postscript files: ps2pdf
+* view pdf: evince file.pdf
+
+
+---------------
+started mar 2011
+updated feb 2014
+
+
